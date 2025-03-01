@@ -18,6 +18,7 @@
 
 #include "evaluate.h"
 
+#include <fstream>
 #include <algorithm>
 #include <cassert>
 #include <cmath>
@@ -34,6 +35,9 @@
 #include "types.h"
 #include "uci.h"
 #include "nnue/nnue_accumulator.h"
+
+static std::ofstream logFile("log.txt", std::ios::app);
+#define LOG_DOUBLE(value1, value2) if (logFile) logFile << value1 << ' ' << value2 << '\n';
 
 namespace Stockfish {
 
@@ -68,9 +72,13 @@ Value Eval::evaluate(const Eval::NNUE::Networks&    networks,
     // Re-evaluate the position when higher eval accuracy is worth the time spent
     if (smallNet && (std::abs(nnue) < 236))
     {
-        std::tie(psqt, positional) = networks.big.evaluate(pos, &caches.big);
+        auto [psqt2, positional2] = networks.big.evaluate(pos, &caches.big);
+		std::swap(positional, positional2);
+		std::swap(psqt, psqt2);
         nnue                       = (125 * psqt + 131 * positional) / 128;
         smallNet                   = false;
+		// just a test
+		LOG_DOUBLE((psqt + positional) - (psqt2 + positional2), optimism )
     }
 
     // Blend optimism and eval with nnue complexity
