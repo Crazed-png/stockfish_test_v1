@@ -73,12 +73,12 @@ Value Eval::evaluate(const Eval::NNUE::Networks&    networks,
     if (smallNet && (std::abs(nnue) < 171))
     {
         auto [psqt2, positional2] = networks.big.evaluate(pos, &caches.big);
-		std::swap(positional, positional2);
+		std::swap(positional, positional2); //testing purpose
 		std::swap(psqt, psqt2);
         nnue                       = (125 * psqt + 131 * positional) / 128;
         smallNet                   = false;
 		// just a test
-		LOG_DOUBLE(((125 * psqt + 131 * positional) / 128) - ((125 * psqt2 + 131 * positional2) / 128), optimism )
+		//LOG_DOUBLE(((125 * psqt + 131 * positional) / 128) - ((125 * psqt2 + 131 * positional2) / 128), optimism )
     }
 
     // Blend optimism and eval with nnue complexity
