@@ -78,7 +78,7 @@ Value Eval::evaluate(const Eval::NNUE::Networks&    networks,
         nnue                       = (125 * psqt + 131 * positional) / 128;
         smallNet                   = false;
 		// just a test
-		LOG_DOUBLE((psqt + positional) - (psqt2 + positional2), optimism )
+		LOG_DOUBLE(((125 * psqt + 131 * positional) / 128) - ((125 * psqt2 + 131 * positional2) / 128), optimism )
     }
 
     // Blend optimism and eval with nnue complexity
