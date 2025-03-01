@@ -1,6 +1,6 @@
 #!/bin/sh
 
-wget_or_curl=$( (command -v wget > /dev/null 2>&1 && echo "wget -qO- --show-progress") || \
+wget_or_curl=$( (command -v wget > /dev/null 2>&1 && echo "wget -qO-") || \
                 (command -v curl > /dev/null 2>&1 && echo "curl -skL"))
 
 if [ -z "$wget_or_curl" ]; then
