@@ -88,7 +88,8 @@ Value Eval::evaluate(const Eval::NNUE::Networks&    networks,
     // Guarantee evaluation does not hit the tablebase range
     v = std::clamp(v, VALUE_TB_LOSS_IN_MAX_PLY + 1, VALUE_TB_WIN_IN_MAX_PLY - 1);
     //report which network was used
-    *bigNetUsed = !smallNet;
+    if ( !(bigNetUsed == nullptr) ) *bigNetUsed = !smallNet;
+    
 
     return v;
 }
