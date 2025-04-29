@@ -812,8 +812,9 @@ Value Search::Worker::search(
     {
         // Never assume anything about values stored in TT
         unadjustedStaticEval = ttData.eval;
-        if (!is_valid(unadjustedStaticEval))
-            unadjustedStaticEval = evaluate(pos);
+
+        if (!is_valid(unadjustedStaticEval) || ttData.bigNet == false)
+            unadjustedStaticEval =  sudo_evaluate(pos, nullptr, true);
 
         ss->staticEval = eval = to_corrected_static_eval(unadjustedStaticEval, correctionValue);
 
@@ -824,12 +825,13 @@ Value Search::Worker::search(
     }
     else
     {
-        unadjustedStaticEval = evaluate(pos);
+        bool bigNetUsed;
+        unadjustedStaticEval = sudo_evaluate(pos, &bigNetUsed, false);
         ss->staticEval = eval = to_corrected_static_eval(unadjustedStaticEval, correctionValue);
 
         // Static evaluation is saved as it was before adjustment by correction history
         ttWriter.write(posKey, VALUE_NONE, ss->ttPv, BOUND_NONE, DEPTH_UNSEARCHED, Move::none(),
-                       unadjustedStaticEval, tt.generation());
+                       unadjustedStaticEval, tt.generation(), bigNetUsed);
     }
 
     // Use static evaluation difference to improve quiet move ordering
@@ -1820,6 +1822,11 @@ TimePoint Search::Worker::elapsed_time() const { return main_manager()->tm.elaps
 Value Search::Worker::evaluate(const Position& pos) {
     return Eval::evaluate(networks[numaAccessToken], pos, accumulatorStack, refreshTable,
                           optimism[pos.side_to_move()]);
+}
+
+Value Search::Worker::sudo_evaluate(const Position& pos, bool *bigNetUsed, bool force_bigNet) {
+    return Eval::evaluate(networks[numaAccessToken], pos, accumulatorStack, refreshTable,
+                          optimism[pos.side_to_move()], bigNetUsed, force_bigNet);
 }
 
 namespace {

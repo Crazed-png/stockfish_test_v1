@@ -324,6 +324,7 @@ class Worker {
     TimePoint elapsed_time() const;
 
     Value evaluate(const Position&);
+    Value sudo_evaluate(const Position&, bool *bigNetUsed, bool force_bigNet);
 
     LimitsType limits;
 
